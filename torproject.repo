@@ -1,0 +1,14 @@
+[tor]
+name=Tor experimental repo
+enabled=1
+baseurl=http://deb.torproject.org/torproject.org/rpm/fc/$releasever/$basearch/
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-torproject.org.asc
+
+[tor-source]
+name=Tor experimental source repo
+enabled=1
+autorefresh=0
+baseurl=http://deb.torproject.org/torproject.org/rpm/fc/$releasever/SRPMS
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-torproject.org.asc
