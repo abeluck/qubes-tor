@@ -1,7 +1,7 @@
-TorVM for Qubes (qubes-tor)
+Qubes TorVM (qubes-tor)
 ==========================
 
-TorVM is a ProxyVM that provides torified networking to all its clients.
+Qubes TorVM is a ProxyVM that provides torified networking to all its clients.
 
 By default, any AppVM using the TorVM as its NetVM will be fully torified, so
 even applications that are not Tor aware will be unable to access the outside
@@ -13,14 +13,20 @@ identifying information (IP address and MAC address).
 Due to the nature of the Tor network, only TCP and DNS traffic is allowed. All
 non-DNS UDP traffic is silently dropped.
 
+
 ## Warning + Disclaimer
 
-1. TorVM is not a magic anonymizing solution. Protecting your identity requires a
-change in behavior. Read the "Protecting Anonymity" section below.
+1. Qubes TorVM is produced independently from the Tor(R) anonymity software and
+   carries no guarantee from The Tor Project about quality, suitability or
+   anything else.
 
-2. Traffic originating from the TorVM itself **IS NOT** routed through
-Tor. This includes system updates to the TorVM. Only traffic from VMs using
-TorVM as their NetVM is torified.
+2. Qubes TorVM is not a magic anonymizing solution. Protecting your identity
+   requires a change in behavior. Read the "Protecting Anonymity" section
+   below.
+
+3. Traffic originating from the TorVM itself **IS NOT** routed through Tor.
+   This includes system updates to the TorVM. Only traffic from VMs using TorVM
+   as their NetVM is torified.
 
 Installation
 ============
@@ -56,9 +62,23 @@ Installation
 6. Start the TorVM and any AppVM you have configured
 6. From the AppVM, verify torified connectivity
 
-        curl http://check.torproject.org
+        curl https://check.torproject.org
 
 Tor logs to syslog, so to view messages use `sudo grep Tor /var/log/messages`
+
+### Troubleshooting ###
+
+1. Check if the qubes-tor service is running (on the torvm)
+
+    [user@torvm] $ sudo service qubes-tor status
+
+2. Watch log 
+
+    [user@torvm] $ sudo tail /var/log/messages
+
+3. Restart the qubes-tor service (and repeat 1-2)
+
+    [user@torvm] $ sudo service qubes-tor restart
 
 Usage
 =====
@@ -169,6 +189,16 @@ Future Work
 * Normalize TorVM fingerprint
 * Optionally route TorVM traffic through Tor
 * Fix Tor's openssl complaint
+
+Acknowledgements
+================
+
+Qubes TorVM is inspired by much of the previous work done in this area of
+transparent torified solutions. Notably the following:
+
+* [adrelanos](mailto:adrelanos@riseup.net) for his work on [aos/Whonix](https://sourceforge.net/p/whonix/wiki/Security/)
+* The [Tor Project wiki](https://trac.torproject.org/projects/tor/wiki/doc/TorifyHOWTO)
+* And the many people who contributed to discussions on [tor-talk](https://lists.torproject.org/pipermail/tor-talk/)
 
 [stream-isolation]: https://gitweb.torproject.org/torspec.git/blob/HEAD:/proposals/171-separate-streams.txt
 [tor-threats]: https://www.torproject.org/projects/torbrowser/design/#adversary
