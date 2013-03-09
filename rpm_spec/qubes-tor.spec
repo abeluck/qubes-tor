@@ -4,7 +4,7 @@
 #
 # The Qubes OS Project, http://www.qubes-os.org
 #
-# Copyright (C) 2012 Abel Luck <abel@outcomedubious.im>
+# Copyright (C) 2012-2013 Abel Luck <abel@outcomedubious.im>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -26,7 +26,7 @@
 
 Name:		qubes-tor
 Version:	%{version}
-Release:	1.beta1%{dist}
+Release:	2%{dist}
 Summary:	The Qubes package for running a TorVM
 
 Group:		Qubes
@@ -88,5 +88,9 @@ rm -rf $RPM_BUILD_ROOT
 /bin/systemctl enable qubes-tor.service 2> /dev/null
 
 %changelog
+* Sat Mar 09 2013 Abel Luck <abel@outcomedubious.im> 1.0
+- Persist tor's DataDirectory
+- Documenation updates
+- Lessen default stream isolation settings
 * Fri Oct 12 2012 Abel Luck <abel@outcomedubious.im> 0.1beta1
 - Initial release
