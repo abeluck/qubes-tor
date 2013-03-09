@@ -2,7 +2,7 @@
 # 
 # The Qubes OS Project, http://www.qubes-os.org
 #
-# Copyright (C) 2012 Abel Luck <abel@outcomedubious.im>
+# Copyright (C) 2012-2013 Abel Luck <abel@outcomedubious.im>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -22,8 +22,8 @@
 killall tor
 QUBES_IP=$(xenstore-read qubes_ip)
 TOR_TRANS_PORT=9040 # maximum circuit isolation
-TOR_SOCKS_PORT=9049 # less circuit isolation
-TOR_SOCKS_ISOLATED_PORT=9050 # maximum circuit isolation
+TOR_SOCKS_PORT=9050 # less circuit isolation
+TOR_SOCKS_ISOLATED_PORT=9049 # maximum circuit isolation
 TOR_CONTROL_PORT=0 # 0 = disabled
 
 if [ X$QUBES_IP == X ]; then

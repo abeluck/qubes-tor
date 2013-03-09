@@ -111,14 +111,14 @@ Tor circuit or always get their own.
 For these reasons TorVM ships with two open SOCKS5 ports that provide Tor
 access with different stream isolation settings:
 
-* Port 9050 - Isolates destination port and address, and by SOCKS Auth  
+* Port 9049 - Isolates destination port and address, and by SOCKS Auth  
 	          Same as default settings listed above, but each app using a unique SOCKS
               user/pass gets its own circuit.
-* Port 9049 - Isolates by SOCKS Auth and client address only  
+* Port 9050 - Isolates by SOCKS Auth and client address only  
               Each AppVM gets its own circuit, and each app using a unique SOCKS
               user/pass gets its own circuit
 
-SOCKS Port 9049 should be used by web browsers.
+SOCKS Port 9050 should be used by web browsers.
 
 Threat Model
 ============
