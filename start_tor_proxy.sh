@@ -25,13 +25,20 @@ TOR_TRANS_PORT=9040 # maximum circuit isolation
 TOR_SOCKS_PORT=9050 # less circuit isolation
 TOR_SOCKS_ISOLATED_PORT=9049 # maximum circuit isolation
 TOR_CONTROL_PORT=0 # 0 = disabled
+DATA_DIRECTORY=/rw/usrlocal/lib/qubes-tor
 
 if [ X$QUBES_IP == X ]; then
 echo "Error getting QUBES IP!"
 echo "Not starting Tor, but setting the traffic redirection anyway to prevent leaks."
 QUBES_IP="127.0.0.1"
 else
+
+if [ ! -d "$DATA_DIRECTORY" ]; then
+	mkdir -p $DATA_DIRECTORY
+fi
+
 /usr/bin/tor \
+--DataDirectory $DATA_DIRECTORY \
 --SocksPort "$QUBES_IP:$TOR_SOCKS_ISOLATED_PORT IsolateClientAddr IsolateSOCKSAuth IsolateDestPort IsolateDestAddr" \
 --SocksPort "$QUBES_IP:$TOR_SOCKS_PORT IsolateClientAddr IsolateSOCKSAuth" \
 --TransPort "$QUBES_IP:$TOR_TRANS_PORT IsolateClientAddr IsolateDestPort IsolateDestAddr" \
