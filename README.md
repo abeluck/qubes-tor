@@ -132,13 +132,27 @@ For these reasons TorVM ships with two open SOCKS5 ports that provide Tor
 access with different stream isolation settings:
 
 * Port 9049 - Isolates destination port and address, and by SOCKS Auth  
-	          Same as default settings listed above, but each app using a unique SOCKS
+	      Same as default settings listed above, but each app using a unique SOCKS
               user/pass gets its own circuit.
 * Port 9050 - Isolates by SOCKS Auth and client address only  
               Each AppVM gets its own circuit, and each app using a unique SOCKS
               user/pass gets its own circuit
 
 SOCKS Port 9050 should be used by web browsers.
+
+## Custom Tor Configuration
+
+Default tor settings are found in the following file and are the same across
+all TorVMs.
+
+     /usr/lib/qubes-tor/torrc
+
+You can override these settings in your TorVM, or provide your own custom
+settings by appending them to:
+
+    /rw/usrlocal/etc/qubes-tor/torrc
+
+For information on tor configuration settings `man tor`
 
 Threat Model
 ============
@@ -185,10 +199,10 @@ Future Work
 * Create Tor Browser packages w/out bundled tor
 * Use local DNS cache to speedup queries (pdnsd)
 * Support arbitrary [DNS queries][dns]
-* Configure bridge/relay/exit node
 * Normalize TorVM fingerprint
 * Optionally route TorVM traffic through Tor
 * Fix Tor's openssl complaint
+* Support custom firewall rules
 
 Acknowledgements
 ================

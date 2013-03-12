@@ -19,39 +19,65 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #
 
-killall tor
+killall tor &> /dev/null
+
+# defaults torrc variables - overridable by user
 QUBES_IP=$(xenstore-read qubes_ip)
 TOR_TRANS_PORT=9040 # maximum circuit isolation
 TOR_SOCKS_PORT=9050 # less circuit isolation
 TOR_SOCKS_ISOLATED_PORT=9049 # maximum circuit isolation
 TOR_CONTROL_PORT=0 # 0 = disabled
+VIRTUAL_ADDR_NET=172.16.0.0/12
 DATA_DIRECTORY=/rw/usrlocal/lib/qubes-tor
 
+VARS="QUBES_IP TOR_TRANS_PORT TOR_SOCKS_PORT TOR_SOCKS_ISOLATED_PORT TOR_CONTROL_PORT VIRTUAL_ADDR_NET DATA_DIRECTORY"
+
+# command line arguments - not overrideable
+DEFAULT_RC=/usr/lib/qubes-tor/torrc
+DEFAULT_RC_TEMPLATE=/usr/lib/qubes-tor/torrc.tpl
+USER_RC=/rw/usrlocal/etc/qubes-tor/torrc
+PID=/var/run/qubes-tor.pid
+
+# $1 = space delimited vars
+# $2 = template file
+function replace_vars()
+{
+	for var in $1; do
+		expressions+=("-e s|$var|${!var}|g")
+	done
+
+	sed "${expressions[@]}" $2
+}
+
 if [ X$QUBES_IP == X ]; then
-echo "Error getting QUBES IP!"
-echo "Not starting Tor, but setting the traffic redirection anyway to prevent leaks."
-QUBES_IP="127.0.0.1"
+	echo "Error getting QUBES IP!"
+	echo "Not starting Tor, but setting the traffic redirection anyway to prevent leaks."
+	QUBES_IP="127.0.0.1"
 else
 
-if [ ! -d "$DATA_DIRECTORY" ]; then
-	mkdir -p $DATA_DIRECTORY
+	if [ ! -d "$DATA_DIRECTORY" ]; then
+		mkdir -p $DATA_DIRECTORY
+	fi
+
+	(replace_vars "$VARS" $DEFAULT_RC_TEMPLATE) > $DEFAULT_RC  || "Error writing default torrc: $DEFAULT_RC"
+
+# verify config file is useable
+
+	/usr/bin/tor \
+		--defaults-torrc $DEFAULT_RC \
+		-f $USER_RC --verify-config \
+	|| echo "Error in tor configuration"
+
+# start tor
+	/usr/bin/tor \
+		--defaults-torrc $DEFAULT_RC \
+		-f $USER_RC \
+		--RunAsDaemon 1 \
+		--Log "notice syslog" \
+		--PIDFile $PID \
+	|| echo "Error starting Tor!"
 fi
 
-/usr/bin/tor \
---DataDirectory $DATA_DIRECTORY \
---SocksPort "$QUBES_IP:$TOR_SOCKS_ISOLATED_PORT IsolateClientAddr IsolateSOCKSAuth IsolateDestPort IsolateDestAddr" \
---SocksPort "$QUBES_IP:$TOR_SOCKS_PORT IsolateClientAddr IsolateSOCKSAuth" \
---TransPort "$QUBES_IP:$TOR_TRANS_PORT IsolateClientAddr IsolateDestPort IsolateDestAddr" \
---DNSPort "$QUBES_IP:53 IsolateClientAddr IsolateSOCKSAuth" \
---ControlPort $TOR_CONTROL_PORT \
---AutomapHostsOnResolve 1 \
---VirtualAddrNetwork "172.16.0.0/12" \
---RunAsDaemon 1 \
---Log "notice syslog" \
---PIDFile /var/run/qubes-tor.pid \
-|| echo "Error starting Tor!"
-
-fi
 
 echo "0" > /proc/sys/net/ipv4/ip_forward
 /sbin/iptables -F

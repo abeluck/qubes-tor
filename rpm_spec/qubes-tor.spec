@@ -26,7 +26,7 @@
 
 Name:		qubes-tor
 Version:	%{version}
-Release:	2%{dist}
+Release:	3%{dist}
 Summary:	The Qubes package for running a TorVM
 
 Group:		Qubes
@@ -64,6 +64,9 @@ rm -rf $RPM_BUILD_ROOT
 install -D torproject.repo $RPM_BUILD_ROOT/etc/yum.repos.d/torproject.repo
 install -D RPM-GPG-KEY-torproject.org.asc $RPM_BUILD_ROOT/etc/pki/rpm-gpg/RPM-GPG-KEY-torproject.org.asc
 install -D start_tor_proxy.sh $RPM_BUILD_ROOT/usr/lib/qubes-tor/start_tor_proxy.sh
+install -D torrc.tpl $RPM_BUILD_ROOT/usr/lib/qubes-tor/torrc.tpl
+install -D torrc $RPM_BUILD_ROOT/usr/lib/qubes-tor/torrc
+install -D torrc.user $RPM_BUILD_ROOT/rw/usrlocal/etc/qubes-tor/torrc
 install -D README.md $RPM_BUILD_ROOT/usr/lib/qubes-tor/README
 install -D 99-qubes-tor-hook.rules $RPM_BUILD_ROOT/etc/udev/rules.d/99-qubes-tor-hook.rules
 install -D qubes-tor.service $RPM_BUILD_ROOT/lib/systemd/system/qubes-tor.service 
@@ -75,9 +78,13 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root,-)
 %dir /usr/lib/qubes-tor
 %attr(0744,root,root) /usr/lib/qubes-tor/start_tor_proxy.sh
+/usr/lib/qubes-tor/torrc.tpl
+/usr/lib/qubes-tor/torrc
 /usr/lib/qubes-tor/README
 /etc/udev/rules.d/99-qubes-tor-hook.rules
 %attr(0644,root,root) /lib/systemd/system/qubes-tor.service 
+%attr(0644,user,user) %dir /rw/usrlocal/etc/qubes-tor/
+%attr(0644,user,user) /rw/usrlocal/etc/qubes-tor/torrc
 
 %files repo
 %defattr(-,root,root,-)
