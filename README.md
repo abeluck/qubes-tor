@@ -1,18 +1,18 @@
 Qubes TorVM (qubes-tor)
 ==========================
 
-Qubes TorVM is a ProxyVM that provides torified networking to all its clients.
+Qubes TorVM is a ProxyVM service that provides torified networking to all its
+clients.
 
 By default, any AppVM using the TorVM as its NetVM will be fully torified, so
 even applications that are not Tor aware will be unable to access the outside
 network directly.
 
-Moreover, applications running behind a TorVM are not able to access globally
+Moreover, AppVMs running behind a TorVM are not able to access globally
 identifying information (IP address and MAC address).
 
-Due to the nature of the Tor network, only TCP and DNS traffic is allowed. All
-non-DNS UDP traffic is silently dropped.
-
+Due to the nature of the Tor network, only IPv4 TCP and DNS traffic is allowed.
+All non-DNS UDP and IPv6 traffic is silently dropped.
 
 ## Warning + Disclaimer
 
@@ -34,7 +34,7 @@ Installation
 
 0. *(Optional)* If you want to use a separate vm template for your TorVM
 
-        qvm-clone fedora-17-x64 fedora-17-x64-net
+        qvm-clone fedora-18-x64 fedora-18-x64-net
 
 1. In dom0, create a proxy vm and disable unnecessary services and enable qubes-tor
 
@@ -45,40 +45,41 @@ Installation
         qvm-service torvm -e qubes-tor
           
         # if you  created a new template in the previous step
-        qvm-prefs torvm -s template fedora-17-x64-net
+        qvm-prefs torvm -s template fedora-18-x64-net
 
 2. From your template vm, install the torproject Fedora repo
 
-        sudo yum install qubes-tor-repo-*.fc17.x86_64.rpm
+        sudo yum install qubes-tor-repo-*.fc18.x86_64.rpm
 
 3. Then, in the template, install the TorVM init scripts
 
-        sudo yum install qubes-tor-init-*.fc17.x86_64.rpm
+        sudo yum install qubes-tor-init-*.fc18.x86_64.rpm
 
-5. Configure an AppVM to use TorVM as its netvm
+5. Configure an AppVM to use TorVM as its netvm (example a vm named anon-web)
 
-        qvm-prefs -s work netvm torvm
+        qvm-prefs -s anon-web netvm torvm
+	... repeat for other appvms ...
 
 6. Start the TorVM and any AppVM you have configured
 6. From the AppVM, verify torified connectivity
 
         curl https://check.torproject.org
 
-Tor logs to syslog, so to view messages use `sudo grep Tor /var/log/messages`
 
 ### Troubleshooting ###
 
+
 1. Check if the qubes-tor service is running (on the torvm)
 
-    [user@torvm] $ sudo service qubes-tor status
+        [user@torvm] $ sudo service qubes-tor status
 
-2. Watch log 
+2. Tor logs to syslog, so to view messages use
 
-    [user@torvm] $ sudo tail /var/log/messages
+        [user@torvm] $ sudo grep Tor /var/log/messages
 
 3. Restart the qubes-tor service (and repeat 1-2)
 
-    [user@torvm] $ sudo service qubes-tor restart
+        [user@torvm] $ sudo service qubes-tor restart
 
 Usage
 =====
@@ -99,7 +100,7 @@ the TorVM.
 The TorVM cannot anonymize information stored or transmitted from your AppVMs
 behind the TorVM. 
 
-*Non-comphrensive* list of identifiers TorVM does not protect:
+*Non-comprehensive* list of identifiers TorVM does not protect:
 
 * Time zone
 * User names and real name
@@ -122,7 +123,7 @@ In order to mitigate identity correlation TorVM makes heavy use of Tor's new
 However, this isn't desirable in all situations, particularly web browsing.
 These days loading a single web page requires fetching resources (images,
 javascript, css) from a dozen or more remote sources. Moreover, the use of
-IsolateDestAddr in a modern web browser may create very uncommon HTTP behaviour
+IsolateDestAddr in a modern web browser may create very uncommon HTTP behavior
 patterns, that could ease fingerprinting.
 
 Additionally, you might have some apps that you want to ensure always share a
@@ -145,12 +146,12 @@ SOCKS Port 9050 should be used by web browsers.
 Default tor settings are found in the following file and are the same across
 all TorVMs.
 
-     /usr/lib/qubes-tor/torrc
+      /usr/lib/qubes-tor/torrc
 
 You can override these settings in your TorVM, or provide your own custom
 settings by appending them to:
 
-    /rw/usrlocal/etc/qubes-tor/torrc
+      /rw/usrlocal/etc/qubes-tor/torrc
 
 For information on tor configuration settings `man tor`
 
@@ -199,10 +200,8 @@ Future Work
 * Create Tor Browser packages w/out bundled tor
 * Use local DNS cache to speedup queries (pdnsd)
 * Support arbitrary [DNS queries][dns]
-* Normalize TorVM fingerprint
-* Optionally route TorVM traffic through Tor
 * Fix Tor's openssl complaint
-* Support custom firewall rules
+* Support custom firewall rules (to support running a relay)
 
 Acknowledgements
 ================

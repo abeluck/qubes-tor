@@ -26,7 +26,7 @@
 
 Name:		qubes-tor
 Version:	%{version}
-Release:	3%{dist}
+Release:	1%{dist}
 Summary:	The Qubes package for running a TorVM
 
 Group:		Qubes
@@ -35,7 +35,7 @@ License:	GPL
 URL:		http://www.qubes-os.org
 
 %description
-A fully featured anonymizing transparent proxy based on Tor for Qubes
+A tor distribution for Qubes OS
 
 %package init
 Summary:        Tor proxy init scripts
@@ -46,14 +46,14 @@ Requires:       tor >= 0.2.3
 %define _builddir %(pwd)
 
 %description init
-The TorVM init scripts and tor configuration
+The qubes-tor service scripts and tor configuration
 
 %package repo
 Summary: Torproject RPM repository
 
 
 %description repo
-The Fedora repository and GPG key from the torproject
+The torproject's Fedora repository and GPG key
 
 %prep
 
@@ -95,7 +95,10 @@ rm -rf $RPM_BUILD_ROOT
 /bin/systemctl enable qubes-tor.service 2> /dev/null
 
 %changelog
-* Sat Mar 09 2013 Abel Luck <abel@outcomedubious.im> 1.0
+* Tue Mar 12 2013 Abel Luck <abel@outcomedubious.im> 0.1.1
+- Support custom Tor settings
+- Robustly handle error conditions
+* Sat Mar 09 2013 Abel Luck <abel@outcomedubious.im> 0.1
 - Persist tor's DataDirectory
 - Documenation updates
 - Lessen default stream isolation settings
