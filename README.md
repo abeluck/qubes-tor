@@ -1,26 +1,32 @@
-TorVM for Qubes (qubes-tor)
+Qubes TorVM (qubes-tor)
 ==========================
 
-TorVM is a ProxyVM that provides torified networking to all its clients.
+Qubes TorVM is a ProxyVM service that provides torified networking to all its
+clients.
 
 By default, any AppVM using the TorVM as its NetVM will be fully torified, so
 even applications that are not Tor aware will be unable to access the outside
 network directly.
 
-Moreover, applications running behind a TorVM are not able to access globally
+Moreover, AppVMs running behind a TorVM are not able to access globally
 identifying information (IP address and MAC address).
 
-Due to the nature of the Tor network, only TCP and DNS traffic is allowed. All
-non-DNS UDP traffic is silently dropped.
+Due to the nature of the Tor network, only IPv4 TCP and DNS traffic is allowed.
+All non-DNS UDP and IPv6 traffic is silently dropped.
 
 ## Warning + Disclaimer
 
-1. TorVM is not a magic anonymizing solution. Protecting your identity requires a
-change in behavior. Read the "Protecting Anonymity" section below.
+1. Qubes TorVM is produced independently from the Tor(R) anonymity software and
+   carries no guarantee from The Tor Project about quality, suitability or
+   anything else.
 
-2. Traffic originating from the TorVM itself **IS NOT** routed through
-Tor. This includes system updates to the TorVM. Only traffic from VMs using
-TorVM as their NetVM is torified.
+2. Qubes TorVM is not a magic anonymizing solution. Protecting your identity
+   requires a change in behavior. Read the "Protecting Anonymity" section
+   below.
+
+3. Traffic originating from the TorVM itself **IS NOT** routed through Tor.
+   This includes system updates to the TorVM. Only traffic from VMs using TorVM
+   as their NetVM is torified.
 
 Installation
 ============
@@ -28,7 +34,7 @@ Installation
 
 0. *(Optional)* If you want to use a separate vm template for your TorVM
 
-        qvm-clone fedora-17-x64 fedora-17-x64-net
+        qvm-clone fedora-18-x64 fedora-18-x64-net
 
 1. In dom0, create a proxy vm and disable unnecessary services and enable qubes-tor
 
@@ -39,26 +45,41 @@ Installation
         qvm-service torvm -e qubes-tor
           
         # if you  created a new template in the previous step
-        qvm-prefs torvm -s template fedora-17-x64-net
+        qvm-prefs torvm -s template fedora-18-x64-net
 
 2. From your template vm, install the torproject Fedora repo
 
-        sudo yum install qubes-tor-repo-*.fc17.x86_64.rpm
+        sudo yum install qubes-tor-repo-*.fc18.x86_64.rpm
 
 3. Then, in the template, install the TorVM init scripts
 
-        sudo yum install qubes-tor-init-*.fc17.x86_64.rpm
+        sudo yum install qubes-tor-init-*.fc18.x86_64.rpm
 
-5. Configure an AppVM to use TorVM as its netvm
+5. Configure an AppVM to use TorVM as its netvm (example a vm named anon-web)
 
-        qvm-prefs -s work netvm torvm
+        qvm-prefs -s anon-web netvm torvm
+	... repeat for other appvms ...
 
 6. Start the TorVM and any AppVM you have configured
 6. From the AppVM, verify torified connectivity
 
-        curl http://check.torproject.org
+        curl https://check.torproject.org
 
-Tor logs to syslog, so to view messages use `sudo grep Tor /var/log/messages`
+
+### Troubleshooting ###
+
+
+1. Check if the qubes-tor service is running (on the torvm)
+
+        [user@torvm] $ sudo service qubes-tor status
+
+2. Tor logs to syslog, so to view messages use
+
+        [user@torvm] $ sudo grep Tor /var/log/messages
+
+3. Restart the qubes-tor service (and repeat 1-2)
+
+        [user@torvm] $ sudo service qubes-tor restart
 
 Usage
 =====
@@ -79,7 +100,7 @@ the TorVM.
 The TorVM cannot anonymize information stored or transmitted from your AppVMs
 behind the TorVM. 
 
-*Non-comphrensive* list of identifiers TorVM does not protect:
+*Non-comprehensive* list of identifiers TorVM does not protect:
 
 * Time zone
 * User names and real name
@@ -102,7 +123,7 @@ In order to mitigate identity correlation TorVM makes heavy use of Tor's new
 However, this isn't desirable in all situations, particularly web browsing.
 These days loading a single web page requires fetching resources (images,
 javascript, css) from a dozen or more remote sources. Moreover, the use of
-IsolateDestAddr in a modern web browser may create very uncommon HTTP behaviour
+IsolateDestAddr in a modern web browser may create very uncommon HTTP behavior
 patterns, that could ease fingerprinting.
 
 Additionally, you might have some apps that you want to ensure always share a
@@ -111,14 +132,28 @@ Tor circuit or always get their own.
 For these reasons TorVM ships with two open SOCKS5 ports that provide Tor
 access with different stream isolation settings:
 
-* Port 9050 - Isolates destination port and address, and by SOCKS Auth  
-	          Same as default settings listed above, but each app using a unique SOCKS
+* Port 9049 - Isolates destination port and address, and by SOCKS Auth  
+	      Same as default settings listed above, but each app using a unique SOCKS
               user/pass gets its own circuit.
-* Port 9049 - Isolates by SOCKS Auth and client address only  
+* Port 9050 - Isolates by SOCKS Auth and client address only  
               Each AppVM gets its own circuit, and each app using a unique SOCKS
               user/pass gets its own circuit
 
-SOCKS Port 9049 should be used by web browsers.
+SOCKS Port 9050 should be used by web browsers.
+
+## Custom Tor Configuration
+
+Default tor settings are found in the following file and are the same across
+all TorVMs.
+
+      /usr/lib/qubes-tor/torrc
+
+You can override these settings in your TorVM, or provide your own custom
+settings by appending them to:
+
+      /rw/usrlocal/etc/qubes-tor/torrc
+
+For information on tor configuration settings `man tor`
 
 Threat Model
 ============
@@ -165,10 +200,18 @@ Future Work
 * Create Tor Browser packages w/out bundled tor
 * Use local DNS cache to speedup queries (pdnsd)
 * Support arbitrary [DNS queries][dns]
-* Configure bridge/relay/exit node
-* Normalize TorVM fingerprint
-* Optionally route TorVM traffic through Tor
 * Fix Tor's openssl complaint
+* Support custom firewall rules (to support running a relay)
+
+Acknowledgements
+================
+
+Qubes TorVM is inspired by much of the previous work done in this area of
+transparent torified solutions. Notably the following:
+
+* [adrelanos](mailto:adrelanos@riseup.net) for his work on [aos/Whonix](https://sourceforge.net/p/whonix/wiki/Security/)
+* The [Tor Project wiki](https://trac.torproject.org/projects/tor/wiki/doc/TorifyHOWTO)
+* And the many people who contributed to discussions on [tor-talk](https://lists.torproject.org/pipermail/tor-talk/)
 
 [stream-isolation]: https://gitweb.torproject.org/torspec.git/blob/HEAD:/proposals/171-separate-streams.txt
 [tor-threats]: https://www.torproject.org/projects/torbrowser/design/#adversary
