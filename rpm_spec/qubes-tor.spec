@@ -34,19 +34,14 @@ Vendor:		Invisible Things Lab
 License:	GPL
 URL:		http://www.qubes-os.org
 
-%description
-A tor distribution for Qubes OS
-
-%package init
-Summary:        Tor proxy init scripts
 Requires:	systemd
 Requires:       qubes-tor-repo
 Requires:       tor >= 0.2.3
 
-%define _builddir %(pwd)
+%description
+A tor distribution for Qubes OS
 
-%description init
-The qubes-tor service scripts and tor configuration
+%define _builddir %(pwd)
 
 %package repo
 Summary: Torproject RPM repository
@@ -74,7 +69,7 @@ install -D qubes-tor.service $RPM_BUILD_ROOT/lib/systemd/system/qubes-tor.servic
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%files init
+%files
 %defattr(-,root,root,-)
 %dir /usr/lib/qubes-tor
 %attr(0744,root,root) /usr/lib/qubes-tor/start_tor_proxy.sh
@@ -91,7 +86,7 @@ rm -rf $RPM_BUILD_ROOT
 /etc/yum.repos.d/torproject.repo
 /etc/pki/rpm-gpg/RPM-GPG-KEY-torproject.org.asc
 
-%post init
+%post
 /bin/systemctl enable qubes-tor.service 2> /dev/null
 
 %changelog

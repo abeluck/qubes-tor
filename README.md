@@ -49,11 +49,11 @@ Installation
 
 2. From your template vm, install the torproject Fedora repo
 
-        sudo yum install qubes-tor-repo-*.fc18.x86_64.rpm
+        sudo yum install qubes-tor-repo
 
 3. Then, in the template, install the TorVM init scripts
 
-        sudo yum install qubes-tor-init-*.fc18.x86_64.rpm
+        sudo yum install qubes-tor
 
 5. Configure an AppVM to use TorVM as its netvm (example a vm named anon-web)
 
