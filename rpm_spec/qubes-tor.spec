@@ -38,6 +38,8 @@ Requires:	systemd
 Requires:       qubes-tor-repo
 Requires:       tor >= 0.2.3
 
+Obsoletes:  qubes-tor-init
+
 %description
 A tor distribution for Qubes OS
 
