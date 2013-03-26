@@ -19,6 +19,9 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #
 
+# run only if qubes-tor service enabled
+[ -r /var/run/qubes-service/qubes-tor ] || exit 0
+
 killall tor &> /dev/null
 
 # defaults torrc variables - overridable by user
