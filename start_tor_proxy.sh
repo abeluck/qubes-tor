@@ -89,7 +89,7 @@ function setup_firewall
 	/sbin/ip6tables -P FORWARD DROP
 	/sbin/ip6tables -F
 
-	for iface in `ls /proc/sys/net/ipv6/conf/vif*/disable_ipv6`; do
+	for iface in `ls /proc/sys/net/ipv6/conf/vif*/disable_ipv6 2> /dev/null`; do
 		echo "1" > $iface
 	done
 }
