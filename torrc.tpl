@@ -2,7 +2,7 @@
 ###################################################################
 # This file is AUTO-GENERATED on startup by the qubes-tor service #
 #                                                                 #
-# Place your own tor settings in /rw/usrlocal/etc/qubes-tor/torrc #
+# Place your own tor settings in /rw/config/qubes-tor/torrc       #
 ###################################################################
 
 DataDirectory DATA_DIRECTORY

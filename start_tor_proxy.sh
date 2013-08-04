@@ -38,7 +38,7 @@ VARS="QUBES_IP TOR_TRANS_PORT TOR_SOCKS_PORT TOR_SOCKS_ISOLATED_PORT TOR_CONTROL
 # command line arguments - not overrideable
 DEFAULT_RC=/usr/lib/qubes-tor/torrc
 DEFAULT_RC_TEMPLATE=/usr/lib/qubes-tor/torrc.tpl
-USER_RC=/rw/usrlocal/etc/qubes-tor/torrc
+USER_RC=/rw/config/qubes-tor/torrc
 PID=/var/run/qubes-tor.pid
 
 
@@ -114,19 +114,24 @@ if [ ! -d "$DATA_DIRECTORY" ]; then
 	mkdir -p $DATA_DIRECTORY || exit_error "Error creating data directory"
 fi
 
+# pass the -f option only when config file exists
+if [ -r "$USER_RC" ]; then
+    USER_RC_OPTION="-f $USER_RC"
+fi
+
 # update the default torrc file with current values
 (replace_vars "$VARS" $DEFAULT_RC_TEMPLATE) > $DEFAULT_RC  || exit_error "Error writing default torrc: $DEFAULT_RC"
 
 # verify config file is useable
 /usr/bin/tor \
 	--defaults-torrc $DEFAULT_RC \
-	-f $USER_RC --verify-config \
+	$USER_RC_OPTION --verify-config \
 || exit_error "Error in Tor configuration"
 
 # start tor
 /usr/bin/tor \
 	--defaults-torrc $DEFAULT_RC \
-	-f $USER_RC \
+	$USER_RC_OPTION \
 	--RunAsDaemon 1 \
 	--Log "notice syslog" \
 	--PIDFile $PID \
