@@ -14,6 +14,8 @@ identifying information (IP address and MAC address).
 Due to the nature of the Tor network, only IPv4 TCP and DNS traffic is allowed.
 All non-DNS UDP and IPv6 traffic is silently dropped.
 
+See [this article](http://theinvisiblethings.blogspot.com/2011/09/playing-with-qubes-networking-for-fun.html) for a description of the concept, architecture, and the original implementation.
+
 ## Warning + Disclaimer
 
 1. Qubes TorVM is produced independently from the Tor(R) anonymity software and
@@ -60,7 +62,15 @@ Installation
         qvm-prefs -s anon-web netvm torvm
 	... repeat for other appvms ...
 
+6. Shutdown templateVM.
+6. Set prefs of torvm to use your default netvm or firewallvm as its NetVM
 6. Start the TorVM and any AppVM you have configured
+6. Execute in TorVM (will be not necessary in R2 Beta3):
+
+        sudo mkdir /rw/usrlocal/etc/qubes-tor
+        sudo touch /rw/usrlocal/etc/qubes-tor/torrc
+        sudo service qubes-tor restart
+
 6. From the AppVM, verify torified connectivity
 
         curl https://check.torproject.org
