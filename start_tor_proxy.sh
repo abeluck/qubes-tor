@@ -65,7 +65,9 @@ function setup_firewall
 	/sbin/iptables -A INPUT -i vif+ -p tcp -m tcp --dport $TOR_TRANS_PORT -j ACCEPT
 	/sbin/iptables -A INPUT -i vif+ -p tcp -m tcp --dport $TOR_SOCKS_PORT -j ACCEPT
 	/sbin/iptables -A INPUT -i vif+ -p tcp -m tcp --dport $TOR_SOCKS_ISOLATED_PORT -j ACCEPT
-	/sbin/iptables -A INPUT -i vif+ -p tcp -m tcp --dport $TOR_CONTROL_PORT -j ACCEPT
+	if [ "$TOR_CONTROL_PORT" != "0" ]; then
+		/sbin/iptables -A INPUT -i vif+ -p tcp -m tcp --dport $TOR_CONTROL_PORT -j ACCEPT
+	fi
 	/sbin/iptables -A INPUT -i vif+ -p udp -m udp -j DROP
 	/sbin/iptables -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
 	/sbin/iptables -A INPUT -i lo -j ACCEPT
