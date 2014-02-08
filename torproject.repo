@@ -4,6 +4,7 @@ enabled=1
 baseurl=http://deb.torproject.org/torproject.org/rpm/fc/$releasever/$basearch/
 gpgcheck=1
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-torproject.org.asc
+skip_if_unavailable=True
 
 [tor-source]
 name=Tor experimental source repo
@@ -12,3 +13,4 @@ autorefresh=0
 baseurl=http://deb.torproject.org/torproject.org/rpm/fc/$releasever/SRPMS
 gpgcheck=1
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-torproject.org.asc
+skip_if_unavailable=True
