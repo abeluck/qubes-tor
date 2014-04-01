@@ -36,7 +36,7 @@ Installation
 
 0. *(Optional)* If you want to use a separate vm template for your TorVM
 
-        qvm-clone fedora-18-x64 fedora-18-x64-net
+        qvm-clone fedora-20-x64 fedora-20-x64-net
 
 1. In dom0, create a proxy vm and disable unnecessary services and enable qubes-tor
 
@@ -47,7 +47,7 @@ Installation
         qvm-service torvm -e qubes-tor
           
         # if you  created a new template in the previous step
-        qvm-prefs torvm -s template fedora-18-x64-net
+        qvm-prefs torvm -s template fedora-20-x64-net
 
 2. From your template vm, install the torproject Fedora repo
 
@@ -63,15 +63,15 @@ Installation
 	... repeat for other appvms ...
 
 6. Shutdown templateVM.
-6. Set prefs of torvm to use your default netvm or firewallvm as its NetVM
-6. Start the TorVM and any AppVM you have configured
-6. Execute in TorVM (will be not necessary in R2 Beta3):
+7. Set prefs of torvm to use your default netvm or firewallvm as its NetVM
+8. Start the TorVM and any AppVM you have configured
+9. Execute in TorVM (will be not necessary in R2 Beta3):
 
         sudo mkdir /rw/usrlocal/etc/qubes-tor
         sudo touch /rw/usrlocal/etc/qubes-tor/torrc
         sudo service qubes-tor restart
 
-6. From the AppVM, verify torified connectivity
+10. From the AppVM, verify torified connectivity
 
         curl https://check.torproject.org
 
