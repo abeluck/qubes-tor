@@ -8,7 +8,7 @@
 DataDirectory DATA_DIRECTORY
 SocksPort "QUBES_IP:TOR_SOCKS_ISOLATED_PORT IsolateClientAddr IsolateSOCKSAuth IsolateDestPort IsolateDestAddr"
 SocksPort "QUBES_IP:TOR_SOCKS_PORT IsolateClientAddr IsolateSOCKSAuth"
-TransPort "QUBES_IP:TOR_TRANS_PORT IsolateClientAddr IsolateDestPort IsolateDestAddr"
+TransPort "QUBES_IP:TOR_TRANS_PORT IsolateClientAddr"
 DNSPort "QUBES_IP:53 IsolateClientAddr IsolateSOCKSAuth"
 ControlPort TOR_CONTROL_PORT
 AutomapHostsOnResolve 1

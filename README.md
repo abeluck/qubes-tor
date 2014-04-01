@@ -127,8 +127,9 @@ behind the TorVM.
 
 ## Performance
 
-In order to mitigate identity correlation TorVM makes heavy use of Tor's new
-[stream isolation feature][stream-isolation]. Read "Threat Model" below for more information.
+In order to mitigate identity correlation TorVM makes use of Tor's new [stream
+isolation feature][stream-isolation]. Read "Threat Model" below for more
+information.
 
 However, this isn't desirable in all situations, particularly web browsing.
 These days loading a single web page requires fetching resources (images,
@@ -142,14 +143,13 @@ Tor circuit or always get their own.
 For these reasons TorVM ships with two open SOCKS5 ports that provide Tor
 access with different stream isolation settings:
 
-* Port 9049 - Isolates destination port and address, and by SOCKS Auth  
-	      Same as default settings listed above, but each app using a unique SOCKS
-              user/pass gets its own circuit.
 * Port 9050 - Isolates by SOCKS Auth and client address only  
               Each AppVM gets its own circuit, and each app using a unique SOCKS
               user/pass gets its own circuit
+* Port 9049 - Isolates client + estination port, address, and by SOCKS Auth
+              Same as default settings listed above, but additionally traffic
+              is isolated based on destination port and destination address.
 
-SOCKS Port 9050 should be used by web browsers.
 
 ## Custom Tor Configuration
 
@@ -194,15 +194,19 @@ in different applications (e.g., web browser, IRC, email) end up being routed
 through the same tor circuit. An adversary could correlate this activity to a
 single pseudonym.
 
-By default TorVM uses the most paranoid stream isolation settings for
-transparently torified traffic:
+TorVM uses the default stream isolation settings for transparently torified
+traffic. While more paranoid options are available, they are not enabled by
+default because they decrease performance and in most cases don't help
+anonymity (see [this tor-talk thread][stream-isolation-explained])
 
-* Each AppVM will use a separate tor circuit (`IsolateClientAddr`)
-* Each destination port will use a separate circuit (`IsolateDestPort`)
-* Each destination address will use a separate circuit (`IsolateDestAdr`)
+By default TorVM does not use the most paranoid stream isolation settings for
+transparently torified traffic due to performance concerns. By default TorVM
+ensures that each AppVM will use a separate tor circuit (`IsolateClientAddr`).
 
-For performance reasons less strict alternatives are provided, but must be
-explicitly configured.
+For more paranoid use cases the SOCKS proxy port 9049 is provided that has all
+stream isolation options enabled. User applications will require manual
+configuration to use this socks port.
+
 
 Future Work
 ===========
@@ -224,6 +228,7 @@ transparent torified solutions. Notably the following:
 * And the many people who contributed to discussions on [tor-talk](https://lists.torproject.org/pipermail/tor-talk/)
 
 [stream-isolation]: https://gitweb.torproject.org/torspec.git/blob/HEAD:/proposals/171-separate-streams.txt
+[stream-isolation-explained]: https://lists.torproject.org/pipermail/tor-talk/2012-May/024403.html
 [tor-threats]: https://www.torproject.org/projects/torbrowser/design/#adversary
 [qubes-net]: http://wiki.qubes-os.org/trac/wiki/QubesNet
 [dns]: https://tails.boum.org/todo/support_arbitrary_dns_queries/
