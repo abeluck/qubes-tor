@@ -1,3 +1,8 @@
+> **DEPRECATED** *DO NOT USE* 
+> This is an old project from the very early days of Qubes.
+>
+> Want to run a tor vm in qubes today? Use [whonix](https://www.qubes-os.org/doc/whonix/install/)
+
 Qubes TorVM (qubes-tor)
 ==========================
 
